@@ -5,11 +5,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <title>Nutrition Tracker</title>
 </head>
 <body>
     <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <nav class="navbar navbar-dark bg-primary">
+                    <span class="navbar-brand">Calorie Tracker</span>
+                </nav>
+            </div>
+        </div>
+        <br><br><br>
+        <h4>Calorie Goal</h4>
+        <br>
+        <div class="row">
+            <div class="col-md-9 offset-1">
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0"></div>
+                </div>
+        </div>
+        <br><br>
         <div class="row">
             <div class="col-md-12">
                 
@@ -28,7 +46,7 @@
 <button class="btn btn-success" type="submit">Add</button>
 </div>
     </form>
-            </div>
+            
         </div>
         <div class="row">
             <div class="col-md-6">
@@ -42,6 +60,7 @@
                         <th>Fats(gm)</th>
                         <th>Protein(gm)</th>
                         <th>Calories(Kcal)</th>
+                        <th>Remove Item</th>
                     </tr>
                     {% for food in consumed_items %} 
                     <tr>
@@ -50,14 +69,85 @@
                         <td>{{ food.food_consumed.fats }}</td>
                         <td>{{ food.food_consumed.protein }}</td>
                         <td>{{ food.food_consumed.calories }}</td>
-
+                        <td><a class="btn btn-danger" href="{% url 'delete' food.id %}">Remove</a></td>
                     </tr>
                     {% endfor %}
+                    <tr>
+                        <td id="name"><b>Total</b></td>
+                        <td id="totalcarbs"><b>Total</b></td>
+                        <td id="totalfats"><b>Total</b></td>
+                        <td id="totalprotein"><b>Total</b></td>
+                        <td id="totalcalories"><b>Total</b></td>
+                   
+                    </tr>
+
                 </table>
             </div>
             <div class="col-md-5 offset-1">
+                <div class="">
+                    <h4>Today's breakdown</h4>
+                </div>
+                <div class="card-header text-white bg-primary">
+                    <h4>Macro Nutrients Breakdown</h4>  
+                </div>
+                <div class="col-md-12">
+                    <canvas id="myChart" width="400" height="400"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </body>
+<script>
+    var table=document.getElementById("table");
+    var carbs=0,protein=0,fats=0,calories=0;
+    for( var i=1;i<table.rows.length-1;i++){
+        //console.log(table.rows[i].cells[1].innerHTML);
+        carbs+=parseFloat(table.rows[i].cells[1].innerHTML);
+        carbs=Math.round(carbs);
+        protein+=parseFloat(table.rows[i].cells[3].innerHTML);
+        protein=Math.round(protein);
+        fats+=parseFloat(table.rows[i].cells[2].innerHTML);
+        fats=Math.round(fats);
+        calories+=parseFloat(table.rows[i].cells[4].innerHTML);
+        calories=Math.round(calories);
+    }
+ console.log(carbs);
+ document.getElementById("totalcarbs").innerHTML='<b>'+carbs+' (gm) </b>';
+ document.getElementById("totalfats").innerHTML='<b>'+fats+' (gm) </b>';
+ document.getElementById("totalprotein").innerHTML='<b>'+protein+' (gm) </b>';
+ document.getElementById("totalcalories").innerHTML='<b>'+calories+' (gm) </b>';
+
+ var calper=(calories/2000)*100;
+ document.getElementsByClassName("progress-bar")[0].setAttribute("style","width:"+calper+"%");
+
+var total=carbs+fats+protein;
+var carbsP=Math.round((carbs/total)*100);
+var proteinP=Math.round((protein/total)*100);
+var fatsP=Math.round((fats/total)*100);
+
+
+
+ const ctx = document.getElementById('myChart').getContext('2d');
+const myChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Carbs '+carbsP+' %', 'Protein '+proteinP+' %', 'Fats '+fatsP+' %'],
+        datasets: [{
+            label: '# of Votes',
+            data: [carbsP,proteinP,fatsP],
+            backgroundColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+});
+</script>
 </html>
