@@ -12,7 +12,7 @@ def index(request):
         Food=food.objects.all()
     else:
         Food=food.objects.all()
-    consumed_items=consume.objects.filter(user='soundarya')
+    consumed_items=consume.objects.filter(user=1)
     return render(request,'myapp/index.html',{'Food':Food,'consumed_items':consumed_items})
 
 def delete_consume(request,id):
