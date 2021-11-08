@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#!_z4@zpo*y2&@(wn=+qn9v8a@3%9mpw3@*7=w+dls8vzs$in0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['','127.0.0.1']
+ALLOWED_HOSTS = ['macro-nutrition-tracker.herokuapp.com','127.0.0.1']
 
 
 # Application definition
