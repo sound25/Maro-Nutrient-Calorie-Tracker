@@ -6,7 +6,7 @@ def index(request):
     if request.method=='POST':
         food_consumed=request.POST['item']
         consumes=food.objects.get(name=food_consumed)
-        username='soundarya'
+        username=1
         consume_obj=consume(user=username,food_consumed=consumes)
         consume_obj.save()
         Food=food.objects.all()
